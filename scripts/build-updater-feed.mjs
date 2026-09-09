@@ -108,8 +108,10 @@ export function buildUpdaterFeed(options) {
 
     const signatureText = readFileSync(signature, 'utf8').trim()
     if (!signatureText) throw new Error(`Updater signature is empty: ${signature}`)
+    // tauri-plugin-updater 在校验时会对 signature 先做 base64 解码，
+    // 因此 latest.json 中的 signature 必须是整个 .sig 文件内容的 base64。
     platforms[platform] = {
-      signature: signatureText,
+      signature: Buffer.from(signatureText, 'utf8').toString('base64'),
       url: new URL(encodeURIComponent(outputName), downloadBase).toString(),
     }
   }
