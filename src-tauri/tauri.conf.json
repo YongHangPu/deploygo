@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "deploygo",
-  "version": "2.3.0",
+  "version": "1.0.0",
   "identifier": "com.deploygo.desktop",
   "build": {
     "frontendDist": "../dist",

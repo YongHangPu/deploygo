@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "2.3.0"
+version = "1.0.0"
 description = "Zero-Downtime Deploy Desktop App"
 authors = ["you"]
 license = ""
