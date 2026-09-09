@@ -16,7 +16,9 @@ import { fileURLToPath } from 'node:url'
 const PLATFORM_ARTIFACTS = {
   'windows-x86_64': {
     directory: '/release-windows/',
-    suffix: '.nsis.zip',
+    // Tauri v2 的 updater 产物即 NSIS 安装包本身（伴随 -setup.exe.sig 签名文件），
+    // 不再是 v1 时代的 .nsis.zip
+    suffix: '-setup.exe',
   },
   'darwin-x86_64': {
     directory: '/release-macos-x86_64/',
