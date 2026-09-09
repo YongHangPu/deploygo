@@ -8,11 +8,35 @@ deploygo 让前端发布回到一条清晰流程：
 - 在页面根组件接入对应框架的版本更新通知组件
 - 在 deploygo 中完成服务器配置、发布、回滚与历史追踪
 
+## 关于开源版
+
+本仓库是 deploygo 的开源仓库，采用「界面与方案开源、部署引擎闭源」的组织方式。
+
+**开源仓库提供：**
+
+- 完整的桌面端界面实现（Vue 3 + Naive UI + Pinia）
+- 五种框架的版本更新通知组件（见 `templates/`，可在业务项目中独立使用，不依赖 deploygo）
+- Rust 后端架构骨架（`src-tauri/src/backend/` 契约层 + 桩实现）
+- 零停机发布方案的完整文档：发布语义、缓存策略、目录结构约定
+
+**不在本仓库中：**
+
+- 部署引擎：SSH 连接管理、产物上传、原子发布与回滚的执行实现
+- 授权与试用系统
+
+**为什么这样拆分：** deploygo 由独立开发者维护，采用商业可持续的开源模式——把对社区最有价值的部分（界面实现、更新通知组件、发布方案文档）完整开源，供学习、参考与直接复用；同时通过官方完整版的授权收入支持项目的持续开发。
+
+**获取完整功能：** 从 [GitHub Releases](https://github.com/YongHangPu/deploygo/releases) 下载官方完整版，提供 90 天免费试用。
+
+**自行构建说明：** 在本仓库执行 `pnpm tauri:build` 得到的是开源展示版——可以启动并浏览全部界面，但部署、连接测试与回滚操作会引导下载官方完整版。
+
 ## 接入方式
 
 ### 1. 挂载更新通知组件
 
 从 `templates/` 目录选择对应框架的组件放入业务项目，并挂载到应用根组件。组件会轮询线上 `version.json`，在发现新版本后提示用户刷新页面获取最新资源。
+
+这部分与 deploygo 桌面端解耦：即使不使用 deploygo 发布，组件本身也可以配合任何按本文档约定生成 `version.json` 的发布流程独立使用。
 
 支持 Vue / React / Angular / Svelte / 纯 JavaScript 五种版本：
 
@@ -31,9 +55,9 @@ deploygo 让前端发布回到一条清晰流程：
 
 业务项目只需要按平常方式构建（`npm run build` / `pnpm build` / `yarn build` 等），无需为 deploygo 调整构建流程。
 
-## deploygo 自动完成什么
+## deploygo 完整版自动完成什么
 
-在桌面端中填写服务器信息、项目名称、本地构建产物目录、线上发布目录和保留版本数后，deploygo 会自动完成：
+以下能力由官方完整版的部署引擎执行（参见上方「关于开源版」）：
 
 1. 识别真实构建目录
 2. 自动生成 `version.json`
@@ -110,6 +134,8 @@ deploygo 的内置发布流程遵循固定顺序：
 - 新用户会逐步进入新版本入口
 - 已打开页面的用户会在检测到新版本后收到刷新提示，而不是被强制打断
 
+这一发布顺序与目录结构约定（`live_root` 指向软链 / `releases/` 保存历史版本）是纯方案层面的设计，即使自行实现发布脚本，也可以直接参考。
+
 ## 缓存建议
 
 如果页面没有按预期提示新版本，优先检查线上缓存策略：
@@ -139,14 +165,9 @@ pnpm dev
 
 ## 下载桌面端
 
-从 [GitHub Releases](https://github.com/YongHangPu/deploygo/releases) 下载最新版本。
+从 [GitHub Releases](https://github.com/YongHangPu/deploygo/releases) 下载官方完整版（含部署引擎，90 天免费试用）。
 
-也可以自行构建：
-
-```bash
-pnpm install
-pnpm tauri:build
-```
+开源展示版的自行构建方式见上方「关于开源版」。
 
 ## License
 
