@@ -1,0 +1,47 @@
+# 日志文件
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# 编辑器目录和文件
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
+REPOSITORY_PROFILE.md
+.codegraph/
+.reasonix/
+reasonix.toml
+
+src-tauri/target/
+src-tauri/gen/schemas
+src-tauri/tauri.updater.generated.json
+/release
+
+# overlay 注入的私有引擎（deploygo-core/scripts/apply-overlay.mjs on）
+# 严禁提交，提交前务必执行 apply-overlay.mjs off
+src-tauri/src/backend/real/
+
+# 许可证密钥和敏感信息（禁止提交！）
+keys*.txt
+*.key
+secret*
+private*
+.trial
+debug-ssh-key-auth-hang.md

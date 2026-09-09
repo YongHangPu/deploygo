@@ -1,0 +1,6 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Usage Question
+    url: https://github.com/YongHangPu/deploygo/discussions
+    about: 如果是使用咨询或思路讨论，也可以在 Discussions 中交流
+

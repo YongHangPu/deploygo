@@ -1,0 +1,60 @@
+{
+  "name": "deploygo",
+  "private": false,
+  "version": "2.3.0",
+  "description": "一套轻量、可落地的零停机发布方案。覆盖了构建产物整理、Nginx 缓存策略、内置发布流程，以及开箱即用的前端版本更新提示组件。核心策略不绑定框架，Vue / React / Angular 等所有 SPA 项目均可适用。",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YongHangPu/deploygo.git"
+  },
+  "homepage": "https://github.com/YongHangPu/deploygo",
+  "bugs": {
+    "url": "https://github.com/YongHangPu/deploygo/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "node scripts/write-updater-config.mjs && tauri build --config src-tauri/tauri.updater.generated.json && node scripts/build-release.mjs",
+    "setVersion": "node scripts/set-version.mjs"
+  },
+  "keywords": [
+    "vue",
+    "nginx",
+    "deploy",
+    "zero-downtime",
+    "version-update"
+  ],
+  "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@tauri-apps/api": "^2.11.0",
+    "@tauri-apps/plugin-clipboard-manager": "^2.3.2",
+    "@tauri-apps/plugin-dialog": "^2.7.1",
+    "@tauri-apps/plugin-fs": "^2.5.1",
+    "@tauri-apps/plugin-process": "^2.3.1",
+    "@tauri-apps/plugin-shell": "^2.3.5",
+    "@tauri-apps/plugin-updater": "^2.10.1",
+    "naive-ui": "^2.44.1",
+    "pinia": "^3.0.4",
+    "sortablejs": "^1.15.7",
+    "vue": "^3.5.34",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.2",
+    "@types/node": "^24.12.3",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vue/tsconfig": "^0.9.1",
+    "postcss": "^8.5.23",
+    "typescript": "~6.0.2",
+    "unplugin-vue-components": "^32.1.0",
+    "vite": "^8.0.12",
+    "vue-tsc": "^3.2.8"
+  },
+  "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264"
+}

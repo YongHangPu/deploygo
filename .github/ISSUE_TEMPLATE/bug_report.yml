@@ -1,0 +1,45 @@
+name: Bug Report
+description: 报告一个使用问题、文档问题或模板缺陷
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈问题。如果方便的话，补充完整上下文会更有助于定位。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 问题描述
+      description: 发生了什么？期望的行为是什么？
+      placeholder: 描述实际结果与预期结果
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 可以按顺序描述如何复现
+      placeholder: |
+        1. 打开页面
+        2. 使用某个模板
+        3. 构建或部署
+        4. 看到错误
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: 环境信息
+      description: 包含 Node、pnpm、系统、浏览器、Nginx 等信息
+      placeholder: Node 20 / pnpm 10 / Windows 11 / Nginx 1.24
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 补充信息
+      description: 可附上报错截图、日志、配置片段

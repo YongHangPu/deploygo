@@ -1,0 +1,4 @@
+# Cargo 生成的目录
+# 其中包含编译产物和可执行文件
+/target/
+/gen/schemas
