@@ -47,6 +47,11 @@ jobs:
 
   audit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # audit-check 发现漏洞时需要创建 check-run，默认 GITHUB_TOKEN 无此权限，
+      # 缺失会导致 "Resource not accessible by integration"
+      checks: write
     steps:
       - uses: actions/checkout@v5
       - uses: rustsec/audit-check@v2.0.0
