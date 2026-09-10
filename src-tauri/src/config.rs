@@ -347,7 +347,18 @@ pub fn encryption_key_path() -> PathBuf {
 }
 
 /// 从磁盘加载 256 位密钥；首次调用时生成并持久化密钥。
+/// 进程级互斥锁：保护加密密钥的「检查-生成-写入」过程。
+/// 并发调用（如首次使用时多个操作同时加密）若不加锁，
+/// 会各自生成不同密钥并互相覆盖，导致已加密数据永久无法解密。
+static ENCRYPTION_KEY_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
 fn get_or_create_key() -> Result<Key<Aes256Gcm>, AppError> {
+    // 持锁贯穿整个读取/生成/写入流程，杜绝并发覆盖。
+    // 若持锁线程 panic 导致锁中毒，后续调用拿不到锁会传播 panic，
+    // 与无锁版本一样表现为调用失败，可接受。
+    let _guard = ENCRYPTION_KEY_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
     let path = encryption_key_path();
     if path.exists() {
         let hex = std::fs::read_to_string(&path)
@@ -507,6 +518,32 @@ mod tests {
         let e2 = encrypt_password(plaintext).expect("encrypt 2");
     // nonce 随机生成，因此每次密文都应不同。
         assert_ne!(e1, e2, "each encryption should produce different output");
+    }
+
+    /// 回归测试：并发首次调用密钥生成/加解密不得互相覆盖密钥。
+    /// 修复前（无进程锁）两个线程可能各自生成密钥并覆盖写入，
+    /// 导致对方已加密的数据无法解密（CI Linux 上稳定复现过）。
+    #[test]
+    fn test_concurrent_encrypt_decrypt_roundtrip() {
+        const THREADS: usize = 8;
+        const ROUNDS: usize = 20;
+        let handles: Vec<_> = (0..THREADS)
+            .map(|t| {
+                std::thread::spawn(move || {
+                    for i in 0..ROUNDS {
+                        let plaintext = format!("thread-{t}-round-{i}-p@ss");
+                        let encrypted =
+                            encrypt_password(&plaintext).expect("concurrent encrypt should succeed");
+                        let decrypted = decrypt_password(&encrypted)
+                            .expect("concurrent decrypt should succeed");
+                        assert_eq!(decrypted, plaintext, "concurrent roundtrip should match");
+                    }
+                })
+            })
+            .collect();
+        for handle in handles {
+            handle.join().expect("thread should not panic");
+        }
     }
 
     #[test]
