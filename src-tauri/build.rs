@@ -5,6 +5,11 @@
 //! 使 `backend` 模块使用真实引擎；目录不存在时使用开源桩实现。
 
 fn main() {
+    // Tauri 官方构建脚本：嵌入 Windows manifest（Common-Controls 6.0 依赖、DPI 声明）、
+    // exe 图标等资源。缺失会导致 Windows 上启动即报
+    // 「无法定位程序输入点 TaskDialogIndirect」。
+    tauri_build::build();
+
     // real/ 目录的增删本身会改变 backend/ 目录内容，此处声明监视路径，
     // 确保 overlay on/off 后重新编译。若切换未生效，可执行 cargo clean。
     println!("cargo:rerun-if-changed=src/backend/real");
