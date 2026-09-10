@@ -30,7 +30,9 @@ const PLATFORM_ARTIFACTS = {
   },
   'linux-x86_64': {
     directory: '/release-linux/',
-    suffix: '.AppImage.tar.gz',
+    // Tauri v2 的 updater 产物即 AppImage 本身（伴随 .AppImage.sig 签名文件），
+    // 不再是 v1 时代的 .AppImage.tar.gz
+    suffix: '.AppImage',
   },
 }
 
