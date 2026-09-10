@@ -70,6 +70,9 @@ impl From<rusqlite::Error> for AppError {
     }
 }
 
+// ssh2 依赖仅在 engine feature（完整版构建）下存在；
+// 纯壳构建不含 SSH 引擎，无需此转换。
+#[cfg(feature = "engine")]
 impl From<ssh2::Error> for AppError {
     fn from(e: ssh2::Error) -> Self {
         AppError {
