@@ -59,6 +59,16 @@ const projectLinks = [
     label: 'GitHub 主页',
     href: 'https://github.com/YongHangPu',
     icon: 'github'
+  },
+  {
+    label: 'GitHub 仓库',
+    href: 'https://github.com/YongHangPu/deploygo',
+    icon: 'repository'
+  },
+  {
+    label: 'Gitee 仓库',
+    href: 'https://gitee.com/yonghangpu/deploygo',
+    icon: 'gitee'
   }
 ]
 
@@ -530,6 +540,9 @@ const handleStartCardAction = async (type: string) => {
 
 <style scoped>
 .guide-view {
+  /* 容器查询基准：响应式断点跟随内容区实际宽度（而非视口），
+     侧栏拖宽、DPI 缩放、小窗口下均能自适应。 */
+  container: guide / inline-size;
   padding: var(--content-padding-y) var(--content-padding-x);
   height: 100%;
   overflow-y: auto;
@@ -546,11 +559,13 @@ const handleStartCardAction = async (type: string) => {
 }
 
 .gv-hero {
+  /* auto-fit：宽度足够时自动两栏，不足时自动单栏 */
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.9fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
   gap: 28px;
   padding: 32px;
   margin-bottom: 28px;
+  min-width: 0;
 }
 
 .gv-hero-copy {
@@ -655,6 +670,8 @@ const handleStartCardAction = async (type: string) => {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+  /* 横跨所有列：避免该行参与自动放置，把指标卡挤成错位网格 */
+  grid-column: 1 / -1;
 }
 
 .gv-quick-link {
@@ -727,7 +744,7 @@ const handleStartCardAction = async (type: string) => {
 }
 
 .gv-card-grid-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
 }
 
 /* 框架选择器 */
@@ -879,7 +896,7 @@ const handleStartCardAction = async (type: string) => {
 }
 
 .gv-workflow-list {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
 }
 
 .gv-workflow-card {
@@ -912,7 +929,7 @@ const handleStartCardAction = async (type: string) => {
 }
 
 .gv-faq-list {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
 }
 
 .gv-faq-card {
@@ -991,20 +1008,38 @@ const handleStartCardAction = async (type: string) => {
   color: var(--text-primary);
 }
 
-@media (max-width: 980px) {
-  .gv-hero,
-  .gv-card-grid-3,
-  .gv-workflow-list,
-  .gv-faq-list {
+/* 防御约束：任何子块都不允许把内容区撑破 */
+.gv-hero,
+.gv-section,
+.gv-card,
+.gv-workflow-card,
+.gv-faq-card,
+.gv-code-panel,
+.gv-hero-metrics article {
+  min-width: 0;
+}
+
+.gv-code-panel pre {
+  max-width: 100%;
+}
+
+/* 响应式：跟随内容区宽度（容器查询），而非视口 */
+@container guide (max-width: 900px) {
+  .gv-hero {
     grid-template-columns: 1fr;
   }
 
   .gv-quick-links {
     justify-content: flex-start;
   }
+
+  /* 窄屏下 hero 折叠为单栏后，指标卡横向排成一行，避免逐个占满整行 */
+  .gv-hero-metrics {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  }
 }
 
-@media (max-width: 640px) {
+@container guide (max-width: 680px) {
   .gv-section,
   .gv-hero {
     padding: 20px;
@@ -1028,6 +1063,10 @@ const handleStartCardAction = async (type: string) => {
 
 <style scoped>
 .guide-view {
+  /* width:100% 必须显式声明：本元素是 .main-area（纵向 flex）的子项，
+     水平 auto margin 会禁用 stretch 拉伸，缺省宽度会塌缩为 fit-content，
+     叠加 container inline-size 后内容不再贡献固有宽度，最终宽度归零。 */
+  width: 100%;
   max-width: var(--content-max-width);
   margin: 0 auto;
   padding: var(--content-padding-y) var(--content-padding-x);
