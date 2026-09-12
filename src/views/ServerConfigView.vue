@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import {
+  NAlert,
   NButton,
   NForm,
   NFormItem,
@@ -708,6 +709,12 @@ const handleImportConfirm = async () => {
           </n-form-item>
         </template>
 
+        <!-- 凭证安全说明：在用户输入敏感凭证的时刻给出明确的安全交代 -->
+        <n-alert type="info" :show-icon="false" class="security-note">
+          服务器凭证仅保存在你的电脑上：密码与口令以 AES-256-GCM 加密存储，部署时通过 SSH
+          直连你的服务器，不经过任何第三方服务器或云端。
+        </n-alert>
+
         <!-- 跳板机 -->
         <n-form-item label="跳板机">
           <n-button
@@ -956,6 +963,11 @@ const handleImportConfirm = async () => {
 
 .test-fail {
   color: var(--accent-red);
+  font-size: 13px;
+}
+
+.security-note {
+  margin: 4px 0 16px;
   font-size: 13px;
 }
 
