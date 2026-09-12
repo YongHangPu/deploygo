@@ -22,9 +22,16 @@ const frameworkOptions = [
   { value: 'js' as const, label: '纯 JS', icon: '🟡' },
 ]
 
-const vueExtMap: Record<string, Record<string, string>> = {
-  vue3: { ts: '.vue', js: '.vue.js' },
-  vue2: { ts: '.vue2.ts', js: '.vue2' },
+// 下载到用户项目时的标准文件名（模板源文件名仅用于仓库内部区分变体）
+const downloadNameMap: Record<string, string> = {
+  'vue3-ts': 'VersionUpdateNotification.vue',
+  'vue3-js': 'VersionUpdateNotification.vue',
+  'vue2-ts': 'VersionUpdateNotification.vue',
+  'vue2-js': 'VersionUpdateNotification.vue',
+  react: 'VersionUpdateNotification.tsx',
+  angular: 'version-update-notification.component.ts',
+  svelte: 'VersionUpdateNotification.svelte',
+  js: 'VersionUpdateNotification.js',
 }
 
 const frameworkSourceMap: Record<string, string> = {
@@ -44,11 +51,7 @@ const currentLabel = computed(() => {
   return isVue ? `${fw.label} (${vueVariant.value === 'ts' ? 'TS' : 'JS'})` : fw.label
 })
 
-const currentExt = computed(() => {
-  const fw = selectedFramework.value
-  if (fw === 'vue3' || fw === 'vue2') return vueExtMap[fw][vueVariant.value]
-  return '.tsx'  // React/Angular/Svelte 默认使用 TSX/TS
-})
+const downloadFilename = computed(() => downloadNameMap[sourceKey.value])
 
 const isVueFramework = computed(() => selectedFramework.value === 'vue3' || selectedFramework.value === 'vue2')
 
@@ -215,7 +218,7 @@ const mountSnippets: Record<string, string> = {
   ].join('\n'),
   'vue3-js': [
     '<script setup>',
-    "import VersionUpdateNotification from './components/VersionUpdateNotification.vue.js'",
+    "import VersionUpdateNotification from './components/VersionUpdateNotification.vue'",
     '<' + '/script>',
     '',
     '<template>',
@@ -225,7 +228,7 @@ const mountSnippets: Record<string, string> = {
   ].join('\n'),
   'vue2-ts': [
     '<script lang="ts">',
-    "import VersionUpdateNotification from './components/VersionUpdateNotification.vue2.ts'",
+    "import VersionUpdateNotification from './components/VersionUpdateNotification.vue'",
     '',
     'export default {',
     "  components: { VersionUpdateNotification },",
@@ -241,7 +244,7 @@ const mountSnippets: Record<string, string> = {
   ].join('\n'),
   'vue2-js': [
     '<script>',
-    "import VersionUpdateNotification from './components/VersionUpdateNotification.vue2'",
+    "import VersionUpdateNotification from './components/VersionUpdateNotification.vue'",
     '',
     'export default {',
     "  components: { VersionUpdateNotification },",
@@ -336,8 +339,7 @@ const copyText = async (text: string, label: string) => {
 const handleStartCardAction = async (type: string) => {
   if (type === 'download') {
     const source = frameworkSourceMap[sourceKey.value]
-    const filename = `VersionUpdateNotification${currentExt.value}`
-    await downloadFile(source, filename)
+    await downloadFile(source, downloadFilename.value)
     return
   }
 
