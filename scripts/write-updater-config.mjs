@@ -12,8 +12,8 @@ if (endpoint || publicKey) {
   if (!endpoint || !publicKey) {
     throw new Error('DEPLOYGO_UPDATER_ENDPOINT and DEPLOYGO_UPDATER_PUBLIC_KEY must be set together')
   }
-  if (!process.env.TAURI_PRIVATE_KEY?.trim()) {
-    throw new Error('TAURI_PRIVATE_KEY is required when signed updater artifacts are enabled')
+  if (!process.env.TAURI_SIGNING_PRIVATE_KEY?.trim()) {
+    throw new Error('TAURI_SIGNING_PRIVATE_KEY is required when signed updater artifacts are enabled')
   }
   const url = new URL(endpoint)
   if (url.protocol !== 'https:') {

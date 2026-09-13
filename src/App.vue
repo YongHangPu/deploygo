@@ -253,8 +253,12 @@ const updateInstalled = ref(false)
 const updateProgress = ref(0)
 const updateError = ref('')
 let updateCheckTimer: ReturnType<typeof setTimeout> | null = null
+let updatePollTimer: ReturnType<typeof setInterval> | null = null
+// 长时间挂着的实例也能收到新版本通知；已有待安装更新或正在安装时跳过，避免重复弹窗
+const UPDATE_POLL_INTERVAL = 6 * 60 * 60 * 1000
 
 const checkForDesktopUpdate = async () => {
+  if (availableUpdate.value || updateInstalling.value) return
   try {
     const configured = await invoke<boolean>('is_updater_configured')
     if (!configured) return
@@ -309,10 +313,12 @@ const restartAfterUpdate = async () => {
 
 onMounted(() => {
   updateCheckTimer = setTimeout(checkForDesktopUpdate, 5_000)
+  updatePollTimer = setInterval(checkForDesktopUpdate, UPDATE_POLL_INTERVAL)
 })
 
 onUnmounted(() => {
   if (updateCheckTimer) clearTimeout(updateCheckTimer)
+  if (updatePollTimer) clearInterval(updatePollTimer)
   availableUpdate.value?.close()
 })
 

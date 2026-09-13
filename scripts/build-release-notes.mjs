@@ -7,6 +7,7 @@
 // 用法：
 //   node scripts/build-release-notes.mjs <版本号>            # 输出到 stdout
 //   node scripts/build-release-notes.mjs <版本号> > notes.md # 供 gh release create --notes-file 使用
+//   node scripts/build-release-notes.mjs <版本号> --section  # 只输出 CHANGELOG 版本小节（供 updater feed --notes 使用）
 //
 // 维护规则：每次发版前在 CHANGELOG.md 顶部（`---` 之后）添加 `## [x.y.z] - 日期` 小节。
 //   找不到对应小节时脚本不失败，输出兜底文案并打印警告。
@@ -38,6 +39,12 @@ if (existsSync(changelogPath)) {
 if (!section) {
   console.warn(`警告: CHANGELOG.md 中未找到 [${version}] 小节，使用兜底文案（建议发版前补充更新记录）`)
   section = '- 详见 [提交历史](https://github.com/YongHangPu/deploygo/commits/main)。'
+}
+
+// --section：只输出 CHANGELOG 版本小节正文（updater 弹窗空间有限，不拼装完整模板）
+if (process.argv.includes('--section')) {
+  process.stdout.write(section + '\n')
+  process.exit(0)
 }
 
 const template = readFileSync(join(root, '.github', 'release-template.md'), 'utf8')
