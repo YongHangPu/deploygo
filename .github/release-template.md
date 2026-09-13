@@ -1,4 +1,4 @@
-# deploygo v{{VERSION}}
+# 更新日志
 
 {{CHANGELOG}}
 
