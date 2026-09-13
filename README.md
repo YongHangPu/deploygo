@@ -8,6 +8,8 @@ deploygo 让前端发布回到一条清晰流程：
 - 在页面根组件接入对应框架的版本更新通知组件
 - 在 deploygo 中完成服务器配置、发布、回滚与历史追踪
 
+**下载桌面端（官方完整版，90 天免费试用）：** [GitHub Releases](https://github.com/YongHangPu/deploygo/releases)
+
 ## 关于开源版
 
 本仓库是 deploygo 的开源仓库，采用「界面与方案开源、部署引擎闭源」的组织方式。
