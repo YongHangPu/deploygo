@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, provide, watch, onMounted, onUnmounted } from 'vue'
+import { ref, shallowRef, computed, provide, watch, onMounted, onUnmounted } from 'vue'
 import { darkTheme, useOsTheme, zhCN, dateZhCN, NModal } from 'naive-ui'
 import { invoke } from '@tauri-apps/api/core'
 import { getCurrentWindow } from '@tauri-apps/api/window'
@@ -246,13 +246,15 @@ onMounted(async () => {
 })
 
 // ====== 已签名的桌面端更新 ======
-const availableUpdate = ref<Update | null>(null)
+// 必须用 shallowRef：Update 类实例内部使用 JS 私有字段，深响应 ref 会把实例包进
+// 响应式 Proxy，调用 downloadAndInstall 时私有字段 brand 校验失败，
+// 报「Cannot read private member from an object whose class did not declare it」
+const availableUpdate = shallowRef<Update | null>(null)
 const showUpdateDialog = ref(false)
 const updateInstalling = ref(false)
 const updateInstalled = ref(false)
 const updateProgress = ref(0)
 const updateError = ref('')
-let updateCheckTimer: ReturnType<typeof setTimeout> | null = null
 let updatePollTimer: ReturnType<typeof setInterval> | null = null
 // 长时间挂着的实例也能收到新版本通知；已有待安装更新或正在安装时跳过，避免重复弹窗
 const UPDATE_POLL_INTERVAL = 6 * 60 * 60 * 1000
@@ -312,12 +314,13 @@ const restartAfterUpdate = async () => {
 }
 
 onMounted(() => {
-  updateCheckTimer = setTimeout(checkForDesktopUpdate, 5_000)
+  // 挂载即检查，不做人为延迟；检查全程异步，不阻塞界面初始化。
+  // 弹窗出现的剩余耗时取决于拉取 GitHub 上 latest.json 的网络状况。
+  void checkForDesktopUpdate()
   updatePollTimer = setInterval(checkForDesktopUpdate, UPDATE_POLL_INTERVAL)
 })
 
 onUnmounted(() => {
-  if (updateCheckTimer) clearTimeout(updateCheckTimer)
   if (updatePollTimer) clearInterval(updatePollTimer)
   availableUpdate.value?.close()
 })
