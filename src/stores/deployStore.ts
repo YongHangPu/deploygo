@@ -49,7 +49,7 @@ export const useDeployStore = defineStore('deploy', () => {
 
     unlistenList.push(
       await listen<string>('script:stderr', (event) => {
-        appendLogLines(event.payload, 'stderr')
+        appendLogLines(event.payload, classifyStderrType(event.payload))
       })
     )
   }
@@ -153,6 +153,12 @@ export const useDeployStore = defineStore('deploy', () => {
         text: line,
       })
     }
+  }
+
+  // 远端 stderr 中已知的良性警告降级为 warn（黄色 ⚠），避免被误标为红色错误。
+  // 场景：本机时钟快于服务器时，GNU tar 解压会输出「时间戳是未来的」提示，退出码仍为 0。
+  function classifyStderrType(text: string): string {
+    return /是未来的|in the future/.test(text) ? 'warn' : 'stderr'
   }
 
   return {
