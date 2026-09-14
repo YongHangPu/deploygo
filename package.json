@@ -1,7 +1,7 @@
 {
   "name": "deploygo",
   "private": false,
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "一套轻量、可落地的零停机发布方案。覆盖了构建产物整理、Nginx 缓存策略、内置发布流程，以及开箱即用的前端版本更新提示组件。核心策略不绑定框架，Vue / React / Angular 等所有 SPA 项目均可适用。",
   "license": "MIT",
   "repository": {
